@@ -19,3 +19,11 @@ Please keep in mind the following notes:
 14) This software is distributed as-is, i'm not responsibile for its usage and/or damages it can cause to your PC.
 
 Enjoy ;)
+
+![Screenshot1](https://user-images.githubusercontent.com/53129080/129806547-b01d50ca-e13b-4e4e-b614-ef5cf2cbc61f.jpg)
+![Screenshot2](https://user-images.githubusercontent.com/53129080/129806551-c5b9b263-940f-4331-9ca8-d9aeeea173e7.jpg)
+![Screenshot3](https://user-images.githubusercontent.com/53129080/129806554-f56b386a-eda2-4b50-a453-0743cdd3de64.jpg)
+![Screenshot4](https://user-images.githubusercontent.com/53129080/129806555-14ab7246-0628-4ad0-877e-83acdda21a7d.jpg)
+![Screenshot5](https://user-images.githubusercontent.com/53129080/129806557-cbf7e470-9780-4796-aaf4-e8ce4c9e1aa1.jpg)
+![Screenshot6](https://user-images.githubusercontent.com/53129080/129806558-a955fc49-6ac7-44a1-a530-99bae25aa71a.jpg)
+![Screenshot7](https://user-images.githubusercontent.com/53129080/129806561-a4965dc0-968f-458e-a831-e5831c34d9d2.jpg)
