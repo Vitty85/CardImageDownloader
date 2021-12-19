@@ -1263,7 +1263,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
             cardurl = "https://img.scryfall.com/cards/large/front/a/c/acd51eed-bd5a-417a-811d-fbd1c08a3715.jpg?1561757812";
         else if(id.equals("17955"))
             cardurl = "https://img.scryfall.com/cards/large/front/b/8/b86ac828-7b49-4663-a718-99fcac904568.jpg?1561756381";
-        else if(id.equals("476097t") || id.equals("293685t") || id.equals("293652t") || id.equals("296820t") ) //Zombie 2/2
+        else if(id.equals("476097t") || id.equals("293685t") || id.equals("293652t") || id.equals("296820t") || id.equals("297499t")) //Zombie 2/2
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/b/5/b5bd6905-79be-4d2c-a343-f6e6a181b3e6.jpg?1562844819";
         else if(id.equals("999901t")) //Monarch Token
             cardurl = "https://img.scryfall.com/cards/large/front/4/0/40b79918-22a7-4fff-82a6-8ebfe6e87185.jpg?1561897497";
@@ -2397,7 +2397,8 @@ public class DownloaderGUI extends javax.swing.JFrame {
                 id.equals("297363t") || id.equals("297358t") || id.equals("297351t") || id.equals("297339t") || id.equals("297330t") || 
                 id.equals("297329t") || id.equals("297327t") || id.equals("297317t") || id.equals("297316t") || id.equals("297307t") || 
                 id.equals("297308t") || id.equals("297304t") || id.equals("297292t") || id.equals("297290t") || id.equals("297287t") || 
-                id.equals("297271t") || id.equals("297268t") || id.equals("297267t") || id.equals("297256t") || id.equals("297197t")) //Blood
+                id.equals("297271t") || id.equals("297268t") || id.equals("297267t") || id.equals("297256t") || id.equals("297197t") ||
+                id.equals("297506t") || id.equals("297511t")) //Blood
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/a/6/a6f374bc-cd29-469f-808a-6a6c004ee8aa.jpg?1636041263";
         else if(id.equals("541110t") || id.equals("297438t")) // Vampire 1/1 Black&White
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/7/e/7eee78d3-c65f-4454-bd3c-1c55388422f5.jpg?1636630265";
@@ -2801,6 +2802,8 @@ public class DownloaderGUI extends javax.swing.JFrame {
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/6/e/6e2ae34f-4558-46e0-95c5-e00d813fa355.jpg?1636629936";
         else if (id.equals("297227t")) //Zombie */* blue
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/5/3/539f4b60-667b-469d-9191-eacaad5c0db1.jpg?1636629909";
+        else if(id.equals("297522t")) // 1/1 Devil red
+            cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/3/e/3e78c4b8-371b-43d7-a315-fb299704aa60.jpg?1562086867";
         
         return cardurl;
     }
@@ -4039,7 +4042,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 || scryset.equals("ATH") || scryset.equals("HA4") || scryset.equals("TSR") || scryset.equals("HA5") || scryset.equals("H1R")
                                 || scryset.equals("HTR18") || scryset.equals("HTR19") || scryset.equals("DKM") || scryset.equals("S00") || scryset.equals("XLN")
                                 || scryset.equals("SOI") || scryset.equals("UST") || scryset.equals("PLG21") || scryset.equals("J21") || scryset.equals("CC2")
-                                || scryset.equals("Q06") || scryset.equals("DBL")){
+                                || scryset.equals("Q06") || scryset.equals("DBL") || scryset.equals("Y22")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).maxBodySize(0)
                                     .timeout(100000*5)
@@ -4194,7 +4197,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 && !scryset.equals("ATH") && !scryset.equals("HA4") && !scryset.equals("TSR") && !scryset.equals("HA5") && !scryset.equals("H1R")
                                 && !scryset.equals("HTR18") && !scryset.equals("HTR19") && !scryset.equals("DKM") && !scryset.equals("S00") && !scryset.equals("XLN")
                                 && !scryset.equals("SOI") && !scryset.equals("UST") && !scryset.equals("PLG21") && !scryset.equals("J21") && !scryset.equals("CC2")
-                                && !scryset.equals("Q06") && !scryset.equals("DBL")){
+                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
                                 Elements outlinks = doc.select("body a");
@@ -4308,7 +4311,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 && !scryset.equals("ATH") && !scryset.equals("HA4") && !scryset.equals("TSR") && !scryset.equals("HA5") && !scryset.equals("H1R")
                                 && !scryset.equals("HTR18") && !scryset.equals("HTR19") && !scryset.equals("DKM") && !scryset.equals("S00") && !scryset.equals("XLN")
                                 && !scryset.equals("SOI") && !scryset.equals("UST") && !scryset.equals("PLG21") && !scryset.equals("J21") && !scryset.equals("CC2") 
-                                && !scryset.equals("Q06") && !scryset.equals("DBL")){
+                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
                             } catch (Exception e) {
@@ -4471,7 +4474,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                         || scryset.equals("HA4") || scryset.equals("TSR") || scryset.equals("HA5") || scryset.equals("H1R") || scryset.equals("HTR18")
                                         || scryset.equals("HTR19") || scryset.equals("DKM") || scryset.equals("S00") || scryset.equals("XLN") || scryset.equals("SOI")
                                         || scryset.equals("UST") || scryset.equals("PLG21") || scryset.equals("J21") || scryset.equals("CC2") || scryset.equals("Q06")
-                                        || scryset.equals("DBL")){
+                                        || scryset.equals("DBL") || scryset.equals("Y22")){
                                     Elements metadata = doc.select("head meta");
                                     if(metadata != null) {
                                         for (int j = 0; j < metadata.size(); j++){
