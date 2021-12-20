@@ -2804,6 +2804,10 @@ public class DownloaderGUI extends javax.swing.JFrame {
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/5/3/539f4b60-667b-469d-9191-eacaad5c0db1.jpg?1636629909";
         else if(id.equals("297522t")) // 1/1 Devil red
             cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/3/e/3e78c4b8-371b-43d7-a315-fb299704aa60.jpg?1562086867";
+        else if(id.equals("297521"))
+            cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/front/2/f/2f986406-bfe3-4e59-bcb6-839ef5f1fbc4.jpg?1638919699";
+        else if(id.equals("297543"))
+            cardurl = "https://c1.scryfall.com/file/scryfall-cards/large/back/2/f/2f986406-bfe3-4e59-bcb6-839ef5f1fbc4.jpg?1638919699";
         
         return cardurl;
     }
@@ -3785,7 +3789,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 currentSet.equals("UNH") || currentSet.equals("XLN") || currentSet.equals("SOI") || currentSet.equals("SOK") ||
                                 currentSet.equals("BOK") || currentSet.equals("CHK") || currentSet.equals("ZNR") || currentSet.equals("KHM") ||
                                 currentSet.equals("STX") || currentSet.equals("MID") || currentSet.equals("CC2") || currentSet.equals("VOW") || 
-                                currentSet.equals("DBL"))
+                                currentSet.equals("DBL") || currentSet.equals("Y22"))
                             rarity = "";
                         if(id != null && !rarity.equals("t") && (negativeId || id.equals("209162") || id.equals("209163") || id.equals("401721") || 
                                 id.equals("401722") || id.equals("999902")))
