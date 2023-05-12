@@ -3789,7 +3789,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 currentSet.equals("UNH") || currentSet.equals("XLN") || currentSet.equals("SOI") || currentSet.equals("SOK") ||
                                 currentSet.equals("BOK") || currentSet.equals("CHK") || currentSet.equals("ZNR") || currentSet.equals("KHM") ||
                                 currentSet.equals("STX") || currentSet.equals("MID") || currentSet.equals("CC2") || currentSet.equals("VOW") || 
-                                currentSet.equals("DBL") || currentSet.equals("Y22"))
+                                currentSet.equals("DBL") || currentSet.equals("Y22") || currentSet.equals("MOM"))
                             rarity = "";
                         if(id != null && !rarity.equals("t") && (negativeId || id.equals("209162") || id.equals("209163") || id.equals("401721") || 
                                 id.equals("401722") || id.equals("999902")))
@@ -3797,7 +3797,8 @@ public class DownloaderGUI extends javax.swing.JFrame {
                         if(id != null && (id.equals("1750411") || id.equals("5176911") || id.equals("44680711") || id.equals("29530711") || 
                                 id.equals("45108910") || id.equals("530447") || id.equals("530448") || id.equals("530449") || id.equals("296817") || 
                                 id.equals("296818") || id.equals("29339510") || id.equals("1749810") || id.equals("5197410") || id.equals("5249510") || 
-                                id.equals("5247310") || id.equals("5213710") || id.equals("5253010") || id.equals("5270410")))
+                                id.equals("5247310") || id.equals("5213710") || id.equals("5253010") || id.equals("5270410") || id.equals("57018400") ||
+                                id.equals("57018401")))
                             rarity = "";
                         int c = lines.indexOf("[/card]",lastIndex);
                         if(c > 0)
@@ -4046,7 +4047,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 || scryset.equals("ATH") || scryset.equals("HA4") || scryset.equals("TSR") || scryset.equals("HA5") || scryset.equals("H1R")
                                 || scryset.equals("HTR18") || scryset.equals("HTR19") || scryset.equals("DKM") || scryset.equals("S00") || scryset.equals("XLN")
                                 || scryset.equals("SOI") || scryset.equals("UST") || scryset.equals("PLG21") || scryset.equals("J21") || scryset.equals("CC2")
-                                || scryset.equals("Q06") || scryset.equals("DBL") || scryset.equals("Y22")){
+                                || scryset.equals("Q06") || scryset.equals("DBL") || scryset.equals("Y22") || scryset.equals("MOM") || scryset.equals("MOC")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).maxBodySize(0)
                                     .timeout(100000*5)
@@ -4201,7 +4202,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 && !scryset.equals("ATH") && !scryset.equals("HA4") && !scryset.equals("TSR") && !scryset.equals("HA5") && !scryset.equals("H1R")
                                 && !scryset.equals("HTR18") && !scryset.equals("HTR19") && !scryset.equals("DKM") && !scryset.equals("S00") && !scryset.equals("XLN")
                                 && !scryset.equals("SOI") && !scryset.equals("UST") && !scryset.equals("PLG21") && !scryset.equals("J21") && !scryset.equals("CC2")
-                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22")){
+                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22") && !scryset.equals("MOM") && !scryset.equals("MOC")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
                                 Elements outlinks = doc.select("body a");
@@ -4315,7 +4316,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 && !scryset.equals("ATH") && !scryset.equals("HA4") && !scryset.equals("TSR") && !scryset.equals("HA5") && !scryset.equals("H1R")
                                 && !scryset.equals("HTR18") && !scryset.equals("HTR19") && !scryset.equals("DKM") && !scryset.equals("S00") && !scryset.equals("XLN")
                                 && !scryset.equals("SOI") && !scryset.equals("UST") && !scryset.equals("PLG21") && !scryset.equals("J21") && !scryset.equals("CC2") 
-                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22")){
+                                && !scryset.equals("Q06") && !scryset.equals("DBL") && !scryset.equals("Y22") && !scryset.equals("MOM") && !scryset.equals("MOC")){
                             try {
                                 doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
                             } catch (Exception e) {
@@ -4478,7 +4479,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                         || scryset.equals("HA4") || scryset.equals("TSR") || scryset.equals("HA5") || scryset.equals("H1R") || scryset.equals("HTR18")
                                         || scryset.equals("HTR19") || scryset.equals("DKM") || scryset.equals("S00") || scryset.equals("XLN") || scryset.equals("SOI")
                                         || scryset.equals("UST") || scryset.equals("PLG21") || scryset.equals("J21") || scryset.equals("CC2") || scryset.equals("Q06")
-                                        || scryset.equals("DBL") || scryset.equals("Y22")){
+                                        || scryset.equals("DBL") || scryset.equals("Y22") || scryset.equals("MOM") || scryset.equals("MOC")){
                                     Elements metadata = doc.select("head meta");
                                     if(metadata != null) {
                                         for (int j = 0; j < metadata.size(); j++){
