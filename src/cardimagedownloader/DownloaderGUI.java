@@ -4712,8 +4712,10 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                             break;
                                         }
                                     }
-                                    String specialtokenurl = getSpecialTokenUrl(id + "t", currentSet);
                                     Elements imgstoken;
+                                    String specialtokenurl = getSpecialTokenUrl(id + "t", currentSet);
+                                    if(specialtokenurl.isEmpty())
+                                        specialtokenurl = getSpecialCardUrl(id + "t", currentSet);
                                     if(!specialtokenurl.isEmpty()) {
                                         try{
                                             doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
