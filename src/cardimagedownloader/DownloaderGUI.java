@@ -159,7 +159,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
         }
     }
     
-    public String findCardImageUrl(JSONObject jsonObject, String primitiveCardName, String format){
+    public String findCardImageUrl(JSONObject jsonObject, String primitiveCardName, String multiverseId, String format){
         Map<String, String> imageUris = new HashMap<>();
         if (jsonObject.get("image_uris") != null) {
             JSONObject imageUrisObject = (JSONObject) jsonObject.get("image_uris");
@@ -180,12 +180,12 @@ public class DownloaderGUI extends javax.swing.JFrame {
                 }
             }
         } else {
-            setTextArea("Cannot retrieve image url for card: " + primitiveCardName, Color.red, new Font("Arial", 1, 14));
+            setTextArea("Cannot retrieve image url for card: " + primitiveCardName + " (" + multiverseId + ")", Color.red, new Font("Arial", 1, 14));
             return "";
         }
         String imageUrl = imageUris.get(format);
         if(imageUrl == null){
-            setTextArea("Cannot retrieve image url for card: " + primitiveCardName, Color.red, new Font("Arial", 1, 14));
+            setTextArea("Cannot retrieve image url for card: " + primitiveCardName + " (" + multiverseId + ")", Color.red, new Font("Arial", 1, 14));
             return "";
         }
         if(imageUrl.indexOf(".jpg") < imageUrl.length())
@@ -193,69 +193,80 @@ public class DownloaderGUI extends javax.swing.JFrame {
         return imageUrl;
     }
     
-    public String findTokenImageUrl(JSONObject jsonObject, String format){
+    public String findTokenImageUrl(JSONObject jsonObject, String multiverseId, String format, String filterName){
         String imageUrl = "";
         try {
             Document document = Jsoup.connect((String )jsonObject.get("scryfall_uri")).get();
             if (document != null) {
                 Element printsTable = document.selectFirst("table.prints-table");
                 if (printsTable != null) {
-                    Element tokenRow = null;
                     Elements rows = printsTable.select("tr");
+                    int howmany = 0;
                     for (Element row : rows) {
                         if (row.text().contains(" Token,") && !row.text().contains("Faces,")) {
-                            tokenRow = row;
-                        }
-                    }
-                    if (tokenRow != null) {
-                        Element aElement = tokenRow.selectFirst("td > a");
-                        if (aElement != null) {
+                            Element aElement = row.selectFirst("td > a");
                             String tokenName = aElement.text();
                             tokenName = tokenName.substring(0, tokenName.indexOf(" Token,"));
-                            imageUrl = aElement.attr("data-card-image-front");
-                            if(imageUrl == null){
-                                setTextArea("Cannot retrieve image url for token: " + tokenName, Color.red, new Font("Arial", 1, 14));
-                                return null;
+                            if(tokenName.equals(filterName)){
+                                setTextArea("The token " + tokenName + " has been filtered for card: " + (String)jsonObject.get("name") + " (" + multiverseId + ")" , Color.blue, new Font("Arial", 1, 14));
+                            } else {
+                                imageUrl = aElement.attr("data-card-image-front");
+                                if(imageUrl != null){
+                                    howmany++;
+                                    if(imageUrl.indexOf(".jpg") < imageUrl.length())
+                                        imageUrl = imageUrl.substring(0, imageUrl.indexOf(".jpg")+4);
+                                }
                             }
-                            if(imageUrl.indexOf(".jpg") < imageUrl.length())
-                                imageUrl = imageUrl.substring(0, imageUrl.indexOf(".jpg")+4);
                         }
+                    }
+                    if (howmany > 1) {
+                        setTextArea("Warning: found " + howmany  + " valid image urls for token created by: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.blue, new Font("Arial", 1, 14));
                     } 
                 } 
             } 
         } catch (IOException e) {
-            setTextArea("There was an error while retrieving token image...", Color.red, new Font("Arial", 1, 14));
-            return null;
+            setTextArea("There was an error while retrieving token image for card: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.red, new Font("Arial", 1, 14));
+            return "";
+        }
+        if(imageUrl == null){
+            setTextArea("There was an error while retrieving token image for card: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.red, new Font("Arial", 1, 14));
+            return "";
         }
         return imageUrl.replace("large", format);
     }
     
-    public String findTokenName(JSONObject jsonObject){
+    public String findTokenName(JSONObject jsonObject, String multiverseId, String filterName){
         String tokenName = "";
         try {
             Document document = Jsoup.connect((String) jsonObject.get("scryfall_uri")).get();
             if (document != null) {
                 Element printsTable = document.selectFirst("table.prints-table");
                 if (printsTable != null) {
-                    Element tokenRow = null;
                     Elements rows = printsTable.select("tr");
+                    int howmany = 0;
                     for (Element row : rows) {
                         if (row.text().contains(" Token,") && !row.text().contains("Faces,")) {
-                            tokenRow = row;
+                            Element aElement = row.selectFirst("td > a");
+                            String tok = aElement.text();
+                            if(tok != null){
+                                tok = tok.substring(0, tok.indexOf(" Token,"));
+                                if(tok.equals(filterName)){
+                                    setTextArea("Filtered token " + tok  + " created by: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.blue, new Font("Arial", 1, 14));
+                                } else { 
+                                    howmany++;
+                                    tokenName = tok;
+                                }
+                            }
                         }
                     }
-                    if (tokenRow != null) {
-                        Element aElement = tokenRow.selectFirst("td > a");
-                        if (aElement != null) {
-                            tokenName = aElement.text();
-                            tokenName = tokenName.substring(0, tokenName.indexOf(" Token,"));
-                        }
+                    if (howmany > 1) {
+                        setTextArea("Found " + howmany  + " valid token name created by: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.blue, new Font("Arial", 1, 14));
                     } 
                 } 
             } 
         } catch (IOException e) {
-            setTextArea("There was an error while retrieving token name...", Color.red, new Font("Arial", 1, 14));
-            return null;
+            setTextArea("There was an error while retrieving token name for card: " + (String)jsonObject.get("name") + " (" + multiverseId + ")", Color.red, new Font("Arial", 1, 14));
+            return "";
         }
         return tokenName;
     }
@@ -4078,7 +4089,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                         String specialcardurl = getSpecialCardUrl(id, currentSet);
                         JSONObject card = findCardJsonById(id);
                         if(specialcardurl.isEmpty() && card != null)
-                            specialcardurl = findCardImageUrl(card, mappa.get(id), "large");
+                            specialcardurl = findCardImageUrl(card, mappa.get(id), id, "large");
                         if(!specialcardurl.isEmpty()){
                             if(cardlist != null){
                                 cardlist.append(currentSet + ";" + id + ";" + specialcardurl + "\n");
@@ -4109,7 +4120,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                         in = new BufferedInputStream(httpcon.getInputStream());
                                     } catch (Exception ex3) {
                                         setTextArea("Error: Problem downloading card: " + mappa.get(id) + " (" + id + ".jpg), i will not retry anymore...", Color.red, new Font("Arial", 1, 14));
-                                        break;
+                                        continue;
                                     }
                                 }
                             }
@@ -4175,118 +4186,118 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 ImageIO.write(tThumbImage, "JPG", new File(thumbcardimage)); //write the image to a file
                             } catch(Exception e) {
                                 setTextArea("Error: Problem saving card: " + mappa.get(id) + " (" + id + ".jpg), i will not download it...", Color.red, new Font("Arial", 1, 14));
-                                break;
+                                continue;
                             }
                             if(card != null && hasToken(id)){
                                 String text = (String) card.get("oracle_text");
-                                if (text!= null && !text.isEmpty() && !text.trim().toLowerCase().contains("nontoken") && ((text.trim().toLowerCase().contains("create") && text.trim().toLowerCase().contains("creature token")) || 
-                                        (text.trim().toLowerCase().contains("put") && text.trim().toLowerCase().contains("token")))){
+                                String nametoken = findTokenName(card, id, "Copy");
+                                if (!nametoken.isEmpty() || (text!= null && !text.isEmpty() && !text.trim().toLowerCase().contains("nontoken") && ((text.trim().toLowerCase().contains("create") && text.trim().toLowerCase().contains("creature token")) || 
+                                        (text.trim().toLowerCase().contains("put") && text.trim().toLowerCase().contains("token"))))){
                                     setTextArea("The card: " + mappa.get(id) + " (" + id + ".jpg) can create a token, i will try to download that image too as " + id + "t.jpg", Color.black, new Font("Arial", 1, 14));
+                                    String specialtokenurl = findTokenImageUrl(card, id, "large", "Copy");
+                                    if(!specialtokenurl.isEmpty()){
+                                        URL urltoken = new URL(specialtokenurl);
 
-                                    String specialtokenurl = findTokenImageUrl(card, "large");
-                                    String nametoken = findTokenName(card);
-                                    URL urltoken = null;
-                                    if(!specialtokenurl.isEmpty())
-                                        urltoken = new URL(specialtokenurl);
+                                        if(cardlist != null){
+                                            cardlist.append(currentSet + ";" + id + "t;" + urltoken.toString() + "\n");
+                                            cardlist.flush();
+                                        }
 
-                                    if(cardlist != null){
-                                        cardlist.append(currentSet + ";" + id + "t;" + urltoken.toString() + "\n");
-                                        cardlist.flush();
-                                    }
-
-                                    HttpURLConnection httpcontoken = (HttpURLConnection) urltoken.openConnection();
-                                    if(httpcontoken == null) {
-                                        setTextArea("Error: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will not download it...", Color.red, new Font("Arial", 1, 14));
-                                        break;
-                                    }
-                                    httpcontoken.addRequestProperty("User-Agent", "Mozilla/4.76");
-                                    httpcontoken.setConnectTimeout(5000);
-                                    httpcontoken.setReadTimeout(5000);
-                                    httpcontoken.setAllowUserInteraction(false);
-                                    httpcontoken.setDoInput(true);
-                                    httpcontoken.setDoOutput(false);
-                                    InputStream intoken = null;
-                                    try{
-                                        intoken = new BufferedInputStream(httpcontoken.getInputStream());
-                                    }catch(Exception ex){
-                                        setTextArea("Warning: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will retry 2 times more...", Color.blue, new Font("Arial", 1, 14));
-                                        try {
+                                        HttpURLConnection httpcontoken = (HttpURLConnection) urltoken.openConnection();
+                                        if(httpcontoken == null) {
+                                            setTextArea("Error: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will not download it...", Color.red, new Font("Arial", 1, 14));
+                                            continue;
+                                        }
+                                        httpcontoken.addRequestProperty("User-Agent", "Mozilla/4.76");
+                                        httpcontoken.setConnectTimeout(5000);
+                                        httpcontoken.setReadTimeout(5000);
+                                        httpcontoken.setAllowUserInteraction(false);
+                                        httpcontoken.setDoInput(true);
+                                        httpcontoken.setDoOutput(false);
+                                        InputStream intoken = null;
+                                        try{
                                             intoken = new BufferedInputStream(httpcontoken.getInputStream());
-                                        } catch (Exception ex2) {
-                                            setTextArea("Warning: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will retry 1 time more...", Color.blue, new Font("Arial", 1, 14));
+                                        }catch(Exception ex){
+                                            setTextArea("Warning: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will retry 2 times more...", Color.blue, new Font("Arial", 1, 14));
                                             try {
                                                 intoken = new BufferedInputStream(httpcontoken.getInputStream());
-                                            } catch (Exception ex3) {
-                                                setTextArea("Error: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will not retry anymore...", Color.red, new Font("Arial", 1, 14));
-                                                break;
+                                            } catch (Exception ex2) {
+                                                setTextArea("Warning: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will retry 1 time more...", Color.blue, new Font("Arial", 1, 14));
+                                                try {
+                                                    intoken = new BufferedInputStream(httpcontoken.getInputStream());
+                                                } catch (Exception ex3) {
+                                                    setTextArea("Error: Problem downloading token: " + nametoken + " (" + id + "t.jpg), i will not retry anymore...", Color.red, new Font("Arial", 1, 14));
+                                                    continue;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    String tokenimage = imgPath + File.separator + id + "t.jpg";
-                                    String tokenthumbimage = thumbPath + File.separator + id + "t.jpg";
+                                        String tokenimage = imgPath + File.separator + id + "t.jpg";
+                                        String tokenthumbimage = thumbPath + File.separator + id + "t.jpg";
 
-                                    try {
-                                        ReadableByteChannel readableByteChannel2 = Channels.newChannel(httpcontoken.getInputStream());
-                                        FileOutputStream fileOutputStream2 = new FileOutputStream(tokenimage);
-                                        FileChannel fileChannel2 = fileOutputStream2.getChannel();
-                                        fileOutputStream2.getChannel().transferFrom(readableByteChannel2, 0, Long.MAX_VALUE);
-                                        fileChannel2.close();
-                                        fileOutputStream2.close();
-
-                                        fileOutputStream2 = new FileOutputStream(tokenthumbimage);
-                                        fileChannel2 = fileOutputStream2.getChannel();
-                                        fileOutputStream2.getChannel().transferFrom(readableByteChannel2, 0, Long.MAX_VALUE);
-                                        fileChannel2.close();
-                                        fileOutputStream2.close();
-                                        readableByteChannel2.close();
-
-                                        Toolkit toolkitToken = Toolkit.getDefaultToolkit();
-                                        MediaTracker trackerToken = new MediaTracker(new Panel());
-                                        Image imageToken = toolkitToken.getImage(tokenimage);
-                                        trackerToken.addImage(imageToken, 0);
                                         try {
-                                            trackerToken.waitForAll();
-                                        } catch (Exception e) { }
+                                            ReadableByteChannel readableByteChannel2 = Channels.newChannel(httpcontoken.getInputStream());
+                                            FileOutputStream fileOutputStream2 = new FileOutputStream(tokenimage);
+                                            FileChannel fileChannel2 = fileOutputStream2.getChannel();
+                                            fileOutputStream2.getChannel().transferFrom(readableByteChannel2, 0, Long.MAX_VALUE);
+                                            fileChannel2.close();
+                                            fileOutputStream2.close();
 
-                                        BufferedImage resizedImgToken = new BufferedImage(ImgX, ImgY, BufferedImage.TYPE_INT_RGB);
-                                        Graphics2D tGraphics2DReiszedToken = resizedImgToken.createGraphics(); //create a graphics object to paint to
-                                        if(currentSet.equals("2ED") || currentSet.equals("RV") || currentSet.equals("4ED") || currentSet.equals("5ED") || 
-                                                currentSet.equals("6ED") || currentSet.equals("7ED") || currentSet.equals("8ED") || currentSet.equals("9ED") || 
-                                                currentSet.equals("CHR") || currentSet.equals("DM") || currentSet.equals("S00") || currentSet.equals("S99") || 
-                                                currentSet.equals("PTK") || currentSet.equals("BTD") || currentSet.equals("ATH") || currentSet.equals("BRB")){
-                                            tGraphics2DReiszedToken.setBackground(Color.WHITE);
-                                            tGraphics2DReiszedToken.setPaint(Color.WHITE);
-                                        }else {
-                                            tGraphics2DReiszedToken.setBackground(Color.BLACK);
-                                            tGraphics2DReiszedToken.setPaint(Color.BLACK);
-                                        }
-                                        tGraphics2DReiszedToken.fillRect(0, 0, ImgX, ImgY);
-                                        tGraphics2DReiszedToken.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                                        tGraphics2DReiszedToken.drawImage(imageToken, 0, 0, ImgX, ImgY, null); //draw the image scaled
-                                        resizedImgToken = resizedImgToken.getSubimage(Border, Border, ImgX-2*Border, ImgY-2*Border);
-                                        ImageIO.write(resizedImgToken, "JPG", new File(tokenimage)); //write the image to a file
+                                            fileOutputStream2 = new FileOutputStream(tokenthumbimage);
+                                            fileChannel2 = fileOutputStream2.getChannel();
+                                            fileOutputStream2.getChannel().transferFrom(readableByteChannel2, 0, Long.MAX_VALUE);
+                                            fileChannel2.close();
+                                            fileOutputStream2.close();
+                                            readableByteChannel2.close();
 
-                                        BufferedImage tThumbImageToken = new BufferedImage(ThumbX, ThumbY, BufferedImage.TYPE_INT_RGB);
-                                        Graphics2D tGraphics2DToken = tThumbImageToken.createGraphics(); //create a graphics object to paint to
-                                        if(currentSet.equals("2ED") || currentSet.equals("RV") || currentSet.equals("4ED") || currentSet.equals("5ED") || 
-                                                currentSet.equals("6ED") || currentSet.equals("7ED") || currentSet.equals("8ED") || currentSet.equals("9ED") || 
-                                                currentSet.equals("CHR") || currentSet.equals("DM") || currentSet.equals("S00") || currentSet.equals("S99") || 
-                                                currentSet.equals("PTK") || currentSet.equals("BTD") || currentSet.equals("ATH") || currentSet.equals("BRB")){
-                                            tGraphics2DToken.setBackground(Color.WHITE);
-                                            tGraphics2DToken.setPaint(Color.WHITE);
-                                        }else {
-                                            tGraphics2DToken.setBackground(Color.BLACK);
-                                            tGraphics2DToken.setPaint(Color.BLACK);
+                                            Toolkit toolkitToken = Toolkit.getDefaultToolkit();
+                                            MediaTracker trackerToken = new MediaTracker(new Panel());
+                                            Image imageToken = toolkitToken.getImage(tokenimage);
+                                            trackerToken.addImage(imageToken, 0);
+                                            try {
+                                                trackerToken.waitForAll();
+                                            } catch (Exception e) { }
+
+                                            BufferedImage resizedImgToken = new BufferedImage(ImgX, ImgY, BufferedImage.TYPE_INT_RGB);
+                                            Graphics2D tGraphics2DReiszedToken = resizedImgToken.createGraphics(); //create a graphics object to paint to
+                                            if(currentSet.equals("2ED") || currentSet.equals("RV") || currentSet.equals("4ED") || currentSet.equals("5ED") || 
+                                                    currentSet.equals("6ED") || currentSet.equals("7ED") || currentSet.equals("8ED") || currentSet.equals("9ED") || 
+                                                    currentSet.equals("CHR") || currentSet.equals("DM") || currentSet.equals("S00") || currentSet.equals("S99") || 
+                                                    currentSet.equals("PTK") || currentSet.equals("BTD") || currentSet.equals("ATH") || currentSet.equals("BRB")){
+                                                tGraphics2DReiszedToken.setBackground(Color.WHITE);
+                                                tGraphics2DReiszedToken.setPaint(Color.WHITE);
+                                            }else {
+                                                tGraphics2DReiszedToken.setBackground(Color.BLACK);
+                                                tGraphics2DReiszedToken.setPaint(Color.BLACK);
+                                            }
+                                            tGraphics2DReiszedToken.fillRect(0, 0, ImgX, ImgY);
+                                            tGraphics2DReiszedToken.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                            tGraphics2DReiszedToken.drawImage(imageToken, 0, 0, ImgX, ImgY, null); //draw the image scaled
+                                            resizedImgToken = resizedImgToken.getSubimage(Border, Border, ImgX-2*Border, ImgY-2*Border);
+                                            ImageIO.write(resizedImgToken, "JPG", new File(tokenimage)); //write the image to a file
+
+                                            BufferedImage tThumbImageToken = new BufferedImage(ThumbX, ThumbY, BufferedImage.TYPE_INT_RGB);
+                                            Graphics2D tGraphics2DToken = tThumbImageToken.createGraphics(); //create a graphics object to paint to
+                                            if(currentSet.equals("2ED") || currentSet.equals("RV") || currentSet.equals("4ED") || currentSet.equals("5ED") || 
+                                                    currentSet.equals("6ED") || currentSet.equals("7ED") || currentSet.equals("8ED") || currentSet.equals("9ED") || 
+                                                    currentSet.equals("CHR") || currentSet.equals("DM") || currentSet.equals("S00") || currentSet.equals("S99") || 
+                                                    currentSet.equals("PTK") || currentSet.equals("BTD") || currentSet.equals("ATH") || currentSet.equals("BRB")){
+                                                tGraphics2DToken.setBackground(Color.WHITE);
+                                                tGraphics2DToken.setPaint(Color.WHITE);
+                                            }else {
+                                                tGraphics2DToken.setBackground(Color.BLACK);
+                                                tGraphics2DToken.setPaint(Color.BLACK);
+                                            }
+                                            tGraphics2DToken.fillRect(0, 0, ThumbX, ThumbY);
+                                            tGraphics2DToken.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                            tGraphics2DToken.drawImage(imageToken, 0, 0, ThumbX, ThumbY, null); //draw the image scaled
+                                            tThumbImageToken = tThumbImageToken.getSubimage(BorderThumb, BorderThumb, ThumbX-2*BorderThumb, ThumbY-2*BorderThumb);
+                                            ImageIO.write(tThumbImageToken, "JPG", new File(tokenthumbimage)); //write the image to a file
+                                        } catch (Exception e){
+                                            setTextArea("Error: Problem saving token: " + nametoken + " (" + id + "t.jpg), i will not download it...", Color.red, new Font("Arial", 1, 14));
+                                            continue;
+
                                         }
-                                        tGraphics2DToken.fillRect(0, 0, ThumbX, ThumbY);
-                                        tGraphics2DToken.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                                        tGraphics2DToken.drawImage(imageToken, 0, 0, ThumbX, ThumbY, null); //draw the image scaled
-                                        tThumbImageToken = tThumbImageToken.getSubimage(BorderThumb, BorderThumb, ThumbX-2*BorderThumb, ThumbY-2*BorderThumb);
-                                        ImageIO.write(tThumbImageToken, "JPG", new File(tokenthumbimage)); //write the image to a file
-                                    } catch (Exception e){
-                                        setTextArea("Error: Problem saving token: " + nametoken + " (" + id + "t.jpg), i will not download it...", Color.red, new Font("Arial", 1, 14));
-                                        break;
                                     }
                                 }
                             }
@@ -4970,6 +4981,10 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                     String specialtokenurl = getSpecialTokenUrl(id + "t", currentSet);
                                     if(specialtokenurl.isEmpty())
                                         specialtokenurl = getSpecialCardUrl(id + "t", currentSet);
+                                    if(specialtokenurl.isEmpty() && card != null)
+                                        specialtokenurl = findTokenImageUrl(card, id, "large", "Copy");
+                                    if(nametoken.isEmpty() && card != null)
+                                        nametoken = findTokenName(card, id, "Copy");
                                     if(!specialtokenurl.isEmpty()) {
                                         try{
                                             doc = Jsoup.connect(imageurl + scryset.toLowerCase()).get();
