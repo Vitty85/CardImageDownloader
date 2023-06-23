@@ -3949,7 +3949,8 @@ public class DownloaderGUI extends javax.swing.JFrame {
                                 currentSet.equals("UNH") || currentSet.equals("XLN") || currentSet.equals("SOI") || currentSet.equals("SOK") ||
                                 currentSet.equals("BOK") || currentSet.equals("CHK") || currentSet.equals("ZNR") || currentSet.equals("KHM") ||
                                 currentSet.equals("STX") || currentSet.equals("MID") || currentSet.equals("CC2") || currentSet.equals("VOW") || 
-                                currentSet.equals("DBL") || currentSet.equals("Y22") || currentSet.equals("MOM") || currentSet.equals("NEO"))
+                                currentSet.equals("DBL") || currentSet.equals("Y22") || currentSet.equals("MOM") || currentSet.equals("NEO") ||
+                                currentSet.equals("SIR"))
                             rarity = "";
                         if(id != null && !rarity.equals("t") && (negativeId || id.equals("209162") || id.equals("209163") || id.equals("401721") || 
                                 id.equals("401722") || id.equals("999902")))
