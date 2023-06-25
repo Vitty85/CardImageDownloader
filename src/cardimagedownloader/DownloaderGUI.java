@@ -4192,7 +4192,7 @@ public class DownloaderGUI extends javax.swing.JFrame {
                             if(card != null && hasToken(id)){
                                 String text = (String) card.get("oracle_text");
                                 String nametoken = findTokenName(card, id, "Copy");
-                                if (!nametoken.isEmpty() || (text!= null && !text.isEmpty() && !text.trim().toLowerCase().contains("nontoken") && (text.trim().toLowerCase().contains("investigate") || (text.trim().toLowerCase().contains("create") && text.trim().toLowerCase().contains("creature token")) || 
+                                if (!nametoken.isEmpty() || (text!= null && !text.isEmpty() && !text.trim().toLowerCase().contains("nontoken") && (text.trim().toLowerCase().contains("investigate") || (text.trim().toLowerCase().contains("create") && text.trim().toLowerCase().contains("token")) || 
                                         (text.trim().toLowerCase().contains("put") && text.trim().toLowerCase().contains("token"))))){
                                     setTextArea("The card: " + mappa.get(id) + " (" + id + ".jpg) can create a token, i will try to download that image too as " + id + "t.jpg", Color.black, new Font("Arial", 1, 14));
                                     String specialtokenurl = findTokenImageUrl(card, id, "large", "Copy");
